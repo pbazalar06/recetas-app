@@ -1,5 +1,6 @@
 import api from "./api";
 
-export const getRecipes = async () => {
-    return await api.get("/recipes");
+export const obtenerRecetas = async () => {
+    const response = await api.get("/recetas");
+    return response.data;
 };
