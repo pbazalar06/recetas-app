@@ -1,6 +1,7 @@
 package com.proyintegrador.recetasbackend.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "\"Receta\"")
@@ -17,6 +18,14 @@ public class Recipe {
 
     @Column(name = "imagenlink")
     private String imagenLink;
+
+    @ManyToMany
+    @JoinTable(
+            name = "\"Receta_Ingredientes\"",
+            joinColumns = @JoinColumn(name = "receta_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingrediente_id")
+    )
+    private List<Ingredient> ingredientes;
 
     public Recipe() {
     }
@@ -37,6 +46,10 @@ public class Recipe {
         return imagenLink;
     }
 
+    public List<Ingredient> getIngredientes() {
+        return ingredientes;
+    }
+
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
@@ -47,5 +60,9 @@ public class Recipe {
 
     public void setImagenLink(String imagenLink) {
         this.imagenLink = imagenLink;
+    }
+
+    public void setIngredientes(List<Ingredient> ingredientes) {
+        this.ingredientes = ingredientes;
     }
 }

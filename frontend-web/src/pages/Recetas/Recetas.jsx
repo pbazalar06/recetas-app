@@ -2,15 +2,22 @@ import "./Recetas.css";
 import { Link } from "react-router-dom";
 
 import { useEffect, useState } from "react";
+
 import { obtenerRecetas } from "../../services/recetasService";
+import { obtenerIngredientes } from "../../services/ingredientesService";
 
 function Recetas() {
 
     const [recetas, setRecetas] = useState([]);
 
+    const [ingredientes, setIngredientes] = useState([]);
+
+    const [ingredientesSeleccionados, setIngredientesSeleccionados] = useState([]);
+
     useEffect(() => {
 
         cargarRecetas();
+        cargarIngredientes();
 
     }, []);
 
@@ -30,6 +37,74 @@ function Recetas() {
 
     };
 
+    const cargarIngredientes = async () => {
+
+        try {
+
+            const data = await obtenerIngredientes();
+
+            setIngredientes(data);
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+    };
+
+    const toggleIngrediente = (ingrediente) => {
+
+        const existe = ingredientesSeleccionados.find(
+            (i) => i.id === ingrediente.id
+        );
+
+        if (existe) {
+
+            setIngredientesSeleccionados(
+
+                ingredientesSeleccionados.filter(
+                    (i) => i.id !== ingrediente.id
+                )
+
+            );
+
+        } else {
+
+            setIngredientesSeleccionados([
+                ...ingredientesSeleccionados,
+                ingrediente
+            ]);
+
+        }
+
+    };
+
+    const recetasFiltradas = recetas
+        .map((receta) => {
+
+            const coincidencias = receta.ingredientes.filter(
+
+                (ingredienteReceta) =>
+
+                    ingredientesSeleccionados.some(
+
+                        (ingredienteSeleccionado) =>
+                            ingredienteSeleccionado.id === ingredienteReceta.id
+
+                    )
+
+            ).length;
+
+            return {
+                ...receta,
+                coincidencias
+            };
+
+        })
+
+        .sort((a, b) => b.coincidencias - a.coincidencias);
+
     return (
 
         <div className="recetas-page">
@@ -38,88 +113,182 @@ function Recetas() {
 
                 <h1>FastDishesAI</h1>
 
-                <div>
+                <div className="navbar-links">
 
-                    <Link to="/inicio">Inicio</Link>
+                    <Link to="/inicio">
+                        Inicio
+                    </Link>
 
-                    <Link to="/detalle">Detalles</Link>
-
-                    <Link to="/">Cerrar sesión</Link>
+                    <Link to="/">
+                        Cerrar sesión
+                    </Link>
 
                 </div>
 
             </nav>
 
-            <section className="hero-recetas">
+            <div className="contenido-principal">
 
-                <div>
+                {/* PANEL IZQUIERDO */}
 
-                    <span className="hero-badge">
-                        Recetas Inteligentes
-                    </span>
+                <aside className="ingredientes-panel">
 
-                    <h2>
-                        Encuentra recetas deliciosas con IA
-                    </h2>
+                    <h2>Ingredientes</h2>
 
-                    <p>
-                        Explora recetas rápidas, modernas y personalizadas
-                        usando los ingredientes disponibles en casa.
-                    </p>
+                    <div className="upload-box">
 
-                </div>
+                        <p className="upload-text">
 
-            </section>
+                            Sube una imagen de tus ingredientes y
+                            nuestra IA podrá reconocerlos automáticamente.
 
-            <section className="buscador-section">
+                        </p>
 
-                <input
-                    type="text"
-                    placeholder="Buscar recetas..."
-                />
-
-            </section>
-
-            <section className="cards-section">
-
-                {recetas.map((receta) => (
-
-                    <div className="receta-card" key={receta.id}>
-
-                        <img
-                            src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1470&auto=format&fit=crop"
-                            alt=""
+                        <input
+                            type="file"
+                            accept="image/*"
+                            id="input-imagen"
+                            hidden
                         />
 
-                        <div className="card-content">
+                        <label
+                            htmlFor="input-imagen"
+                            className="upload-btn"
+                        >
 
-                            <h3>{receta.titulo}</h3>
+                            Subir imagen
 
-                            <p>{receta.descripcion}</p>
-
-                            <div className="card-footer">
-
-                                <span>⏱ 30 min</span>
-
-                                <Link to="/detalle">
-
-                                    <button>
-                                        Ver receta
-                                    </button>
-
-                                </Link>
-
-                            </div>
-
-                        </div>
+                        </label>
 
                     </div>
 
-                ))}
+                    <p>
+                        Selecciona los ingredientes que tienes disponibles
+                    </p>
 
-            </section>
+                    <div className="ingredientes-lista">
+
+                        {ingredientes.map((ingrediente) => (
+
+                            <button
+                                key={ingrediente.id}
+                                onClick={() => toggleIngrediente(ingrediente)}
+                                className={
+                                    ingredientesSeleccionados.some(
+                                        (i) => i.id === ingrediente.id
+                                    )
+                                        ? "ingrediente-btn activo"
+                                        : "ingrediente-btn"
+                                }
+                            >
+
+                                {ingrediente.nombre}
+
+                            </button>
+
+                        ))}
+
+                    </div>
+
+                </aside>
+
+                {/* PANEL DERECHO */}
+
+                <main className="recetas-container">
+
+                    <section className="hero-recetas">
+
+                        <h2>
+                            Recetas encontradas
+                        </h2>
+
+                        <p>
+                            Las recetas con más coincidencias aparecerán primero
+                        </p>
+
+                    </section>
+
+                    <section className="cards-section">
+
+                        {recetasFiltradas.map((receta) => (
+
+                            <div
+                                className="receta-card"
+                                key={receta.id}
+                            >
+
+                                <img
+                                    src={receta.imagenLink}
+                                    alt={receta.titulo}
+                                />
+
+                                <div className="card-content">
+
+                                    <h3>
+                                        {receta.titulo}
+                                    </h3>
+
+                                    <p>
+                                        {receta.descripcion}
+                                    </p>
+
+                                    <div className="ingredientes-receta">
+
+                                        {receta.ingredientes.map((ingrediente) => (
+
+                                            <span
+                                                key={ingrediente.id}
+                                                className={
+                                                    ingredientesSeleccionados.some(
+                                                        (i) => i.id === ingrediente.id
+                                                    )
+                                                        ? "ingrediente-chip match"
+                                                        : "ingrediente-chip"
+                                                }
+                                            >
+
+                                                {ingrediente.nombre}
+
+                                            </span>
+
+                                        ))}
+
+                                    </div>
+
+                                    <div className="card-footer">
+
+                                        <span>
+
+                                            Coincidencias:
+                                            {" "}
+                                            {receta.coincidencias}
+
+                                        </span>
+
+                                        <Link to="/detalle">
+
+                                            <button>
+                                                Ver receta
+                                            </button>
+
+                                        </Link>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        ))}
+
+                    </section>
+
+                </main>
+
+            </div>
 
         </div>
+
     );
 }
 
