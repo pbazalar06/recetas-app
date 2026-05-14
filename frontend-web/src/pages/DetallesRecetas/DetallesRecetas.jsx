@@ -71,31 +71,7 @@ function DetallesRecetas() {
 
                     </p>
 
-                    <div className="detalle-datos">
 
-                        <div className="dato-card">
-
-                            <h3>Disponibilidad</h3>
-
-                            <p>todo el dia</p>
-
-                        </div>
-
-                        <div className="dato-card">
-
-
-
-                        </div>
-
-                        <div className="dato-card">
-
-                            <h3>Presentación</h3>
-
-                            <p>individual</p>
-
-                        </div>
-
-                    </div>
 
                 </div>
 
