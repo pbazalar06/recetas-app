@@ -27,6 +27,8 @@ public class Recipe {
     )
     private List<Ingredient> ingredientes;
 
+    private String preparacion;
+
     public Recipe() {
     }
 
@@ -65,4 +67,13 @@ public class Recipe {
     public void setIngredientes(List<Ingredient> ingredientes) {
         this.ingredientes = ingredientes;
     }
+
+    public String getPreparacion() {
+        return preparacion;
+    }
+
+    public void setPreparacion(String preparacion) {
+        this.preparacion = preparacion;
+    }
+
 }

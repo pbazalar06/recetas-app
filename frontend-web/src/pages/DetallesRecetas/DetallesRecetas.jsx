@@ -1,7 +1,32 @@
 import "./DetallesRecetas.css";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+
+import { useState, useEffect } from "react";
+
+import { obtenerRecetas } from "../../services/recetasService";
 
 function DetallesRecetas() {
+
+    const { id } = useParams();
+
+    const [receta, setReceta] = useState(null);
+
+    useEffect(() => {
+
+        cargarReceta();
+
+    }, []);
+
+    const cargarReceta = async () => {
+
+        const data = await obtenerRecetas();
+
+        const recetaEncontrada = data.find(r => r.id == id);
+
+        setReceta(recetaEncontrada);
+
+    };
+
 
     return (
 
@@ -26,7 +51,7 @@ function DetallesRecetas() {
                 <div className="detalle-imagen">
 
                     <img
-                        src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1470&auto=format&fit=crop"
+                        src={receta?.imagenLink}
                         alt=""
                     />
 
@@ -38,100 +63,50 @@ function DetallesRecetas() {
                         Receta destacada
                     </span>
 
-                    <h2>Pizza Italiana</h2>
+                    <h2>{receta?.titulo}</h2>
 
                     <p className="detalle-descripcion">
 
-                        Una deliciosa pizza italiana preparada con ingredientes frescos,
-                        salsa artesanal y queso derretido.
+                        {receta?.descripcion}
 
                     </p>
 
-                    <div className="detalle-datos">
 
-                        <div className="dato-card">
-
-                            <h3>⏱ Tiempo</h3>
-
-                            <p>30 min</p>
-
-                        </div>
-
-                        <div className="dato-card">
-
-                            <h3>🔥 Calorías</h3>
-
-                            <p>520 kcal</p>
-
-                        </div>
-
-                        <div className="dato-card">
-
-                            <h3>🍽 Porciones</h3>
-
-                            <p>2 personas</p>
-
-                        </div>
-
-                    </div>
 
                 </div>
 
             </section>
 
-            <section className="contenido-receta">
+           <section className="contenido-receta">
 
-                <div className="ingredientes">
+               <div className="ingredientes">
 
-                    <h3>Ingredientes</h3>
+                   <h3>Ingredientes</h3>
 
-                    <ul>
+                   <ul>
 
-                        <li>🍅 Salsa de tomate</li>
+                       {receta?.ingredientes.map((ingrediente) => (
 
-                        <li>🧀 Queso mozzarella</li>
+                           <li key={ingrediente.id}>
+                               {ingrediente.nombre}
+                           </li>
 
-                        <li>🍞 Masa para pizza</li>
+                       ))}
 
-                        <li>🌿 Orégano</li>
+                   </ul>
 
-                        <li>🥓 Pepperoni</li>
+               </div>
 
-                    </ul>
+               <div className="preparacion">
+                   <h3>Preparación</h3>
+                   {receta?.preparacion.split("\n").map((parrafo, index) => (
+                       <p key={index} style={{ marginBottom: "15px", lineHeight: "1.6" }}>
+                           {parrafo}
+                       </p>
+                   ))}
+               </div>
 
-                </div>
-
-                <div className="preparacion">
-
-                    <h3>Preparación</h3>
-
-                    <ol>
-
-                        <li>
-                            Extender la masa sobre una bandeja para horno.
-                        </li>
-
-                        <li>
-                            Agregar salsa de tomate y distribuir uniformemente.
-                        </li>
-
-                        <li>
-                            Añadir queso mozzarella y pepperoni.
-                        </li>
-
-                        <li>
-                            Hornear durante 20 minutos a temperatura media.
-                        </li>
-
-                        <li>
-                            Servir caliente y decorar con orégano.
-                        </li>
-
-                    </ol>
-
-                </div>
-
-            </section>
+           </section>
 
         </div>
     );
