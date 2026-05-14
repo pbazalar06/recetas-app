@@ -265,13 +265,13 @@ function Recetas() {
 
                                         </span>
 
-                                        <Link to="/detalle">
+                                        <Link to={`/detalle/${receta.id}`}>
 
-                                            <button>
-                                                Ver receta
-                                            </button>
+                                                                           <button>
+                                                                               Ver receta
+                                                                           </button>
 
-                                        </Link>
+                                                                       </Link>
 
                                     </div>
 

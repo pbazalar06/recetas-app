@@ -19,7 +19,7 @@ function App() {
 
                 <Route path="/recetas" element={<Recetas />} />
 
-                <Route path="/detalle" element={<DetallesRecetas />} />
+                <Route path="/detalle/:id" element={<DetallesRecetas />} />
 
             </Routes>
         </BrowserRouter>
