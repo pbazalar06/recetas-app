@@ -22,4 +22,15 @@ public class IngredientController {
     public List<Ingredient> obtenerIngredientes() {
         return ingredientRepository.findAll();
     }
+
+    @PostMapping
+    public Ingredient agregarIngrediente(
+            @RequestBody Ingredient ingredient
+    ){
+        if(ingredientRepository.existsByNombre(ingredient.getNombre())){
+            throw new RuntimeException("El ingrediente ya existe");
+        }
+        return ingredientRepository.save(ingredient);
+    }
+
 }

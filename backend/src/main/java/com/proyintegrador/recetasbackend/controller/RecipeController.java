@@ -21,4 +21,38 @@ public class RecipeController {
     public List<Recipe> obtenerRecetas() {
         return recipeRepository.findAll();
     }
+    @PostMapping
+    public Recipe guardarReceta(@RequestBody Recipe recipe){
+
+        if(recipeRepository.existsByTituloIgnoreCase(recipe.getTitulo())){
+
+            throw new RuntimeException("La receta ya existe");
+
+        }
+
+        return recipeRepository.save(recipe);
+
+    }
+    @PutMapping("/{id}")
+    public Recipe actualizarReceta(
+            @PathVariable Long id,
+            @RequestBody Recipe recetaNueva){
+
+        Recipe receta = recipeRepository
+                .findById(id)
+                .orElseThrow();
+
+        receta.setTitulo(recetaNueva.getTitulo());
+
+        receta.setDescripcion(recetaNueva.getDescripcion());
+
+        receta.setImagenLink(recetaNueva.getImagenLink());
+
+        receta.setPreparacion(recetaNueva.getPreparacion());
+
+        receta.setIngredientes(recetaNueva.getIngredientes());
+
+        return recipeRepository.save(receta);
+
+    }
 }

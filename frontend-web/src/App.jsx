@@ -5,7 +5,7 @@ import Registro from "./pages/Registro/Registro";
 import Inicio from "./pages/Inicio/Inicio";
 import Recetas from "./pages/Recetas/Recetas";
 import DetallesRecetas from "./pages/DetallesRecetas/DetallesRecetas";
-
+import Admin from "./pages/administrador/administrador"
 function App() {
     return (
         <BrowserRouter>
@@ -20,6 +20,8 @@ function App() {
                 <Route path="/recetas" element={<Recetas />} />
 
                 <Route path="/detalle/:id" element={<DetallesRecetas />} />
+
+                <Route path="/administrador" element={<Admin />} />
 
             </Routes>
         </BrowserRouter>
